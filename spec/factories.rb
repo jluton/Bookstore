@@ -23,4 +23,9 @@ FactoryBot.define do
     association :book
     association :book_format_type
   end
+
+  factory :book_review do
+    rating { 3 }
+    association :book
+  end
 end

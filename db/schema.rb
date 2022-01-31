@@ -35,12 +35,12 @@ ActiveRecord::Schema.define(version: 2022_01_31_204151) do
     t.index ["book_id"], name: "index_book_formats_on_book_id"
   end
 
-  create_table "book_review", force: :cascade do |t|
+  create_table "book_reviews", force: :cascade do |t|
     t.integer "book_id"
     t.integer "rating"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["book_id"], name: "index_book_review_on_book_id"
+    t.index ["book_id"], name: "index_book_reviews_on_book_id"
   end
 
   create_table "books", force: :cascade do |t|

@@ -27,7 +27,7 @@ class SupportingColumns < ActiveRecord::Migration[7.0]
       t.timestamps
     end
 
-    create_table :book_review do |t|
+    create_table :book_reviews do |t|
       t.references :book
       t.integer :rating, nil: false
       # I would place a validation on the model requiring rating to be >= 1 and <= 5.

@@ -14,4 +14,17 @@ RSpec.describe Book, type: :model do
     expect(format_types.first.id).to eq(physical_format.id)
     expect(format_types.last.id).to eq(digit_format.id) 
   end
+
+  it 'returns author name' do
+    author = book.author
+
+    expect(book.author_name).to eq("#{author.first_name} #{author.last_name}")
+  end
+
+  it 'returns average rating' do
+    FactoryBot.create(:book_review, book: book, rating: 2)
+    FactoryBot.create(:book_review, book: book, rating: 5)
+
+    expect(book.average_rating).to eq(3.5)
+  end
 end
