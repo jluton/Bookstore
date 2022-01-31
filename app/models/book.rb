@@ -5,16 +5,15 @@ class Book < ApplicationRecord
   has_many :book_formats
 
   def book_format_types
-    # Returns a collection of the BookFormatTypes this book is available in
-
+    book_formats.map(&:book_format_type)
   end
 
   def author_name
-    # The name of the author of this book in “lastname, firstname” format
+    author.full_name
   end
 
   def average_rating
-    # The average (mean) of all the book reviews for this book.  Rounded to one decimal place.  
+    book_reviews.sum {|r| r.rating.to_f} / book_reviews.length
   end
 
   def self.search(query, options)

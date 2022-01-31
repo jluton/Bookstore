@@ -12,7 +12,7 @@ RSpec.describe Book, type: :model do
     format_types = book.book_format_types
     expect(format_types.length).to eq(2)
     expect(format_types.first.id).to eq(physical_format.id)
-    expect(format_types.last.id).to eq(digit_format.id) 
+    expect(format_types.last.id).to eq(digital_format.id) 
   end
 
   it 'returns author name' do
