@@ -27,4 +27,84 @@ RSpec.describe Book, type: :model do
 
     expect(book.average_rating).to eq(3.5)
   end
+
+  it 'searches by exact author last name' do
+    author1 = FactoryBot.create(:author, last_name: 'Smith')
+    author2 = FactoryBot.create(:author, last_name: 'Smithsson')
+    book1 = FactoryBot.create(:book, author: author1)
+    book2 = FactoryBot.create(:book, author: author1)
+    book3 = FactoryBot.create(:book, author: author2)
+
+    result = Book.search('smith')
+    expect(result.length).to eq(2)
+    expect(result.first.id).to eq(book1.id)
+    expect(result.last.id).to eq(book2.id)
+  end
+
+  it 'searches by exact publisher name' do
+    publisher1 = FactoryBot.create(:publisher, name: 'Brody & Mack')
+    publisher2 = FactoryBot.create(:publisher, name: 'Brody & Macksson')
+    book1 = FactoryBot.create(:book, publisher: publisher1)
+    book2 = FactoryBot.create(:book, publisher: publisher1)
+    book3 = FactoryBot.create(:book, publisher: publisher2)
+
+    result = Book.search('Brody & Mack')
+    expect(result.length).to eq(2)
+    expect(result.first.id).to eq(book1.id)
+    expect(result.last.id).to eq(book2.id)
+  end
+
+  it 'searches by partial title' do
+    book1 = FactoryBot.create(:book, title: 'The Errant Fool')
+    book2 = FactoryBot.create(:book, title: 'Fool\'s Gold')
+    book3 = FactoryBot.create(:book, title: 'Errant Knights')
+
+    result = Book.search('Fool')
+    expect(result.length).to eq(2)
+    expect(result.first.id).to eq(book1.id)
+    expect(result.last.id).to eq(book2.id)
+  end
+
+  it 'does not duplicate search results' do
+    author = FactoryBot.create(:author, last_name: 'Errant')
+    book = FactoryBot.create(:book, title: 'The Errant Fool', author: author)
+
+    result = Book.search('Fool')
+    expect(result.length).to eq(1)
+    expect(result.first.id).to eq(book.id)
+  end
+
+  it 'searches by title only' do
+    author = FactoryBot.create(:author, last_name: 'Errant')
+    book1 = FactoryBot.create(:book, title: 'The Errant Fool')
+    book2 = FactoryBot.create(:book, author: author)
+
+    result = Book.search('Errant', { title_only: true })
+    expect(result.length).to eq(1)
+    expect(result.first.id).to eq(book1.id)
+  end
+
+  it 'filters search by book format type' do
+    book1 = FactoryBot.create(:book, title: 'The Errant Fool')
+    book2 = FactoryBot.create(:book, title: 'Errant Knights')
+    format_type = FactoryBot.create(:book_format_type)
+    FactoryBot.create(:book_format, book: book1, book_format_type: format_type)
+
+    result = Book.search('Errant', { book_format_type_id: format_type.id })
+    expect(result.length).to eq(1)
+    expect(result.first.id).to eq(book1.id)
+  end
+
+  it 'filters search by physical formats' do
+    book1 = FactoryBot.create(:book, title: 'The Errant Fool')
+    book2 = FactoryBot.create(:book, title: 'Errant Knights')
+    format_type1 = FactoryBot.create(:book_format_type, physical: true)
+    format_type2 = FactoryBot.create(:book_format_type, physical: false)
+    FactoryBot.create(:book_format, book: book1, book_format_type: format_type1)
+    FactoryBot.create(:book_format, book: book2, book_format_type: format_type2)
+
+    result = Book.search('Errant', { book_format_physical: true })
+    expect(result.length).to eq(1)
+    expect(result.first.id).to eq(book1.id)
+  end
 end
